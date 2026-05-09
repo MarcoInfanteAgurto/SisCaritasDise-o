@@ -45,6 +45,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { CustomSelect } from './CustomSelect';
 
 const DEFAULT_FIELDS = [
   { key: 'nombre', label: 'Nombre', type: 'text' },
@@ -951,64 +952,72 @@ export function ModulePage({ pageId }) {
         </div>
       )}
 
+      {/* ── Stats Cards ── */}
+      <div className="module-stats-grid">
+        {stats.map((stat) => (
+          <div key={stat.label} className={`module-stat ${stat.tone}`}>
+            <div className="module-stat-icon">
+              <stat.icon size={18} />
+            </div>
+            <div>
+              <strong>{stat.value}</strong>
+              <span>{stat.label}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {isFinancialPage && <FinancialAnalytics rows={filtered} pageId={pageId} />}
 
-      <div className="data-table-wrap modern-table">
-        <div className="table-toolbar">
-          <div className="table-toolbar-left">
-            <button className="btn btn-primary table-primary-action" onClick={openAdd}>
-              <Plus size={13} />
-              {pageId === 'compras' || pageId === 'compras-farmacia' ? 'Agregar compra' : 'Nuevo'}
-            </button>
-            <div className="table-search">
-              <Search size={13} color="var(--text-light)" />
-              <input
-                type="text"
-                placeholder={`Buscar en ${definition.title.toLowerCase()}...`}
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-              />
-            </div>
-            <label className="table-filter-select">
-              <span>Estado</span>
-              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
-                <option value="all">Todos</option>
-                {statusOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {statusLabels[option] || option}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="table-filter-select">
-              <span>{secondaryFilterLabel}</span>
-              <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}>
-                <option value="all">Todos</option>
-                {typeOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <div className="table-summary-chips" aria-label="Resumen de registros">
-              {summaryChips.map((chip) => (
-                <span key={`${chip.label}-${chip.tone}`} className={`table-summary-chip ${chip.tone}`}>
-                  <i />
-                  <strong>{chip.value}</strong>
-                  {chip.label}
-                </span>
-              ))}
-            </div>
+      {/* ── Filters Bar ── */}
+      <div className="module-filters-bar">
+        <div className="module-filters-left">
+          <div className="table-search">
+            <Search size={14} color="var(--text-light)" />
+            <input
+              type="text"
+              placeholder={`Buscar ${definition.title.toLowerCase()}...`}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
           </div>
-          <div className="table-actions">
-            <button className="btn btn-outline" onClick={exportCsv}>
-              <Download size={13} />
-              Exportar
-            </button>
+          <div className="table-filter-select">
+            <span>Estado</span>
+            <CustomSelect
+              value={statusFilter}
+              onChange={(val) => setStatusFilter(val)}
+              options={[{ value: 'all', label: 'Todos' }, ...statusOptions.map((o) => ({ value: o, label: statusLabels[o] || o }))]}
+            />
           </div>
+          <div className="table-filter-select">
+            <span>{secondaryFilterLabel}</span>
+            <CustomSelect
+              value={typeFilter}
+              onChange={(val) => setTypeFilter(val)}
+              options={[{ value: 'all', label: 'Todos' }, ...typeOptions.map((o) => ({ value: o, label: o }))]}
+            />
+          </div>
+          {(search || statusFilter !== 'all' || typeFilter !== 'all') && (
+            <button className="btn btn-ghost" onClick={clearFilters} title="Limpiar filtros">
+              <X size={14} />
+              Limpiar
+            </button>
+          )}
         </div>
+        <div className="module-filters-right">
+          <button className="btn btn-outline" onClick={exportCsv}>
+            <Download size={13} />
+            Exportar
+          </button>
+          <button className="btn btn-primary table-primary-action" onClick={openAdd}>
+            <Plus size={14} />
+            {pageId === 'compras' || pageId === 'compras-farmacia' ? 'Agregar compra' : `Nuevo ${definition.title.split(' ').pop()}`}
+          </button>
+        </div>
+      </div>
 
+      {/* ── Data Table ── */}
+      <div className="data-table-wrap modern-table">
         <div className="table-scroll">
           <table>
             <thead>
@@ -1094,18 +1103,28 @@ export function ModulePage({ pageId }) {
         </div>
 
         <div className="table-footer">
-          <div>
-            <span>
-              Mostrando {paginatedRows.length ? (safePage - 1) * pageSize + 1 : 0}-{Math.min(safePage * pageSize, filtered.length)} de {filtered.length}
+          <div className="table-footer-info">
+            <span className="table-footer-label">
+              Página {safePage} de {pageCount}
             </span>
-            <small>{definition.collection} · datos simulados</small>
+            <div className="table-footer-progress">
+              <div className="table-footer-progress-bar" style={{ width: `${Math.round((safePage / Math.max(pageCount, 1)) * 100)}%` }} />
+            </div>
           </div>
           <div className="table-pagination">
-            <button className="btn btn-ghost" disabled={safePage === 1} onClick={() => setPage((value) => Math.max(1, value - 1))} title="Anterior">
+            <button className="pagination-btn" disabled={safePage === 1} onClick={() => setPage((value) => Math.max(1, value - 1))} title="Anterior">
               <ChevronLeft size={15} />
             </button>
-            <span>Página {safePage} de {pageCount}</span>
-            <button className="btn btn-ghost" disabled={safePage === pageCount} onClick={() => setPage((value) => Math.min(pageCount, value + 1))} title="Siguiente">
+            {Array.from({ length: pageCount }, (_, i) => i + 1).map((pageNum) => (
+              <button
+                key={pageNum}
+                className={`pagination-btn pagination-num${pageNum === safePage ? ' active' : ''}`}
+                onClick={() => setPage(pageNum)}
+              >
+                {pageNum}
+              </button>
+            ))}
+            <button className="pagination-btn" disabled={safePage === pageCount} onClick={() => setPage((value) => Math.min(pageCount, value + 1))} title="Siguiente">
               <ChevronRight size={15} />
             </button>
           </div>
@@ -1126,14 +1145,13 @@ export function ModulePage({ pageId }) {
                 <div key={field.key} className="form-group">
                   <label>{field.label}</label>
                   {field.type === 'select' ? (
-                    <select value={form[field.key] || ''} onChange={(event) => setForm((prev) => ({ ...prev, [field.key]: event.target.value }))}>
-                      <option value="">Seleccionar...</option>
-                      {field.options.map((option) => (
-                        <option key={option} value={option}>
-                          {statusLabels[option] || option}
-                        </option>
-                      ))}
-                    </select>
+                    <CustomSelect
+                      className="full"
+                      value={form[field.key] || ''}
+                      onChange={(val) => setForm((prev) => ({ ...prev, [field.key]: val }))}
+                      options={[{ value: '', label: 'Seleccionar...' }, ...field.options.map((o) => ({ value: o, label: statusLabels[o] || o }))]}
+                      placeholder="Seleccionar..."
+                    />
                   ) : (
                     <input
                       type={field.type}

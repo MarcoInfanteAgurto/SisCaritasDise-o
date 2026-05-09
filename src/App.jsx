@@ -1,10 +1,20 @@
 import { useState } from 'react';
 import { LoginPage } from './components/LoginPage';
 import { IconSidebar } from './components/IconSidebar';
-import { PanelSidebar } from './components/PanelSidebar';
+import { PanelSidebar, FIRST_PAGE } from './components/PanelSidebar';
 import { TopHeader } from './components/TopHeader';
 import { Dashboard } from './components/Dashboard';
 import { ModulePage } from './components/ModulePage';
+import { ConfigPage } from './components/ConfigPage';
+
+const CONFIG_PAGES = new Set([
+  'config-apariencia',
+  'config-notificaciones',
+  'config-seguridad',
+  'config-perfil',
+  'config-sistema',
+  'config-general',
+]);
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -23,7 +33,9 @@ export default function App() {
       setPanelOpen(false);
     } else {
       setPanelOpen(true);
-      setActivePage('');
+      /* Auto-select first subsection */
+      const firstPage = FIRST_PAGE[moduleId];
+      setActivePage(firstPage || '');
     }
   }
 
@@ -45,11 +57,19 @@ export default function App() {
     return <LoginPage onLogin={handleLogin} />;
   }
 
+  function handleLogout() {
+    setUser(null);
+    setActiveModule('dashboard');
+    setActivePage('dashboard');
+    setPanelOpen(false);
+  }
+
   const showPanel = panelOpen && activeModule !== 'dashboard';
+  const isConfigPage = activeModule === 'configuracion' && CONFIG_PAGES.has(activePage);
 
   return (
     <div className="app-shell">
-      <IconSidebar activeModule={activeModule} onSelectModule={handleSelectModule} />
+      <IconSidebar activeModule={activeModule} onSelectModule={handleSelectModule} user={user} onLogout={handleLogout} />
 
       {showPanel && (
         <PanelSidebar
@@ -65,6 +85,8 @@ export default function App() {
         <main className="page-content">
           {activeModule === 'dashboard' ? (
             <Dashboard onNavigate={handleNavigate} />
+          ) : isConfigPage ? (
+            <ConfigPage activePage={activePage} />
           ) : activePage ? (
             <ModulePage pageId={activePage} />
           ) : (
@@ -79,3 +101,4 @@ export default function App() {
     </div>
   );
 }
+

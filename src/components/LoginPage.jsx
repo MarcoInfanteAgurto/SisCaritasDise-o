@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ArrowRight, ShieldCheck, LockKeyhole } from 'lucide-react';
+import caritasBg from '../assets/caritas_backgorund.png';
+import logoCaritas from '../assets/logo_caritas.jpeg';
 
 export function LoginPage({ onLogin }) {
   const [email, setEmail] = useState('admin@siscaritas.org');
   const [password, setPassword] = useState('admin123');
-  const [remember, setRemember] = useState(false);
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -24,80 +25,92 @@ export function LoginPage({ onLogin }) {
   }
 
   return (
-    <div className="login-page">
-      <div className="login-card">
-        <div className="login-brand">
-          <div className="login-logo">SC</div>
-          <h1>SisCaritas</h1>
-          <p>Sistema de Gestión Social y Clínica</p>
+    <div className="login-layout">
+      {/* Panel Izquierdo: Branding y Fondo */}
+      <div className="login-hero" style={{ backgroundImage: `url(${caritasBg})` }}>
+        <div className="login-hero-overlay">
+          <div className="login-hero-content">
+            <div className="login-hero-logo">
+              <img src={logoCaritas} alt="Cáritas" />
+            </div>
+            <h1>SisCaritas</h1>
+            <p>Uniendo fuerzas para el desarrollo social y la salud integral.</p>
+          </div>
         </div>
+      </div>
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          {error && (
-            <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 8, padding: '8px 12px', marginBottom: 14, fontSize: 12.5, color: '#c0392b' }}>
-              {error}
-            </div>
-          )}
-
-          <div className="form-group">
-            <label htmlFor="email">Correo electrónico</label>
-            <div style={{ position: 'relative' }}>
-              <Mail size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)' }} />
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="correo@siscaritas.org"
-                style={{ paddingLeft: 32 }}
-              />
-            </div>
+      {/* Panel Derecho: Formulario */}
+      <div className="login-form-panel">
+        <div className="login-form-wrapper slide-in">
+          
+          <div className="login-form-header">
+            <h2>Bienvenido de <span>vuelta</span></h2>
+            <p>Ingresa tus credenciales para continuar</p>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Contraseña</label>
-            <div style={{ position: 'relative' }}>
-              <Lock size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)' }} />
-              <input
-                id="password"
-                type={showPw ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Contraseña"
-                style={{ paddingLeft: 32, paddingRight: 36 }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPw(!showPw)}
-                style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)', background: 'none', border: 'none', cursor: 'pointer' }}
-              >
-                {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
+          <div className="login-form-card">
+            <form className="login-form" onSubmit={handleSubmit}>
+              {error && (
+                <div className="login-error-msg">
+                  {error}
+                </div>
+              )}
+
+              <div className="form-group">
+                <label htmlFor="email">CORREO ELECTRÓNICO</label>
+                <div className="input-with-icon">
+                  <Mail size={16} className="input-icon" />
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="usuario@siscaritas.org"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <div className="label-row">
+                  <label htmlFor="password">CONTRASEÑA</label>
+                  <button type="button" className="login-link">
+                    ¿Olvidaste tu acceso?
+                  </button>
+                </div>
+                <div className="input-with-icon">
+                  <Lock size={16} className="input-icon" />
+                  <input
+                    id="password"
+                    type={showPw ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••••"
+                  />
+                  <button
+                    type="button"
+                    className="pw-toggle"
+                    onClick={() => setShowPw(!showPw)}
+                  >
+                    {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" className="btn-login" disabled={loading}>
+                {loading ? 'Ingresando...' : 'Iniciar sesión'}
+                <ArrowRight size={16} className="btn-icon-right" />
               </button>
-            </div>
+            </form>
           </div>
 
-          <div className="login-extras">
-            <label className="checkbox-label">
-              <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
-              Recordarme
-            </label>
-            <button type="button" className="login-link" style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12.5 }}>
-              ¿Olvidaste tu contraseña?
-            </button>
+          <div className="login-footer">
+            <span className="footer-item"><LockKeyhole size={12} /> SSL 256-bit</span>
+            <span className="footer-divider">|</span>
+            <span className="footer-item"><ShieldCheck size={12} /> Datos protegidos</span>
+            <span className="footer-divider">|</span>
+            <span className="footer-item">© 2026 SisCaritas</span>
           </div>
 
-          <button type="submit" className="btn-login" disabled={loading}>
-            {loading ? 'Ingresando...' : 'Iniciar Sesión'}
-          </button>
-        </form>
-
-        <div className="login-roles">
-          <strong>Roles disponibles</strong>
-          <div className="roles-chips">
-            {['ADMIN', 'COORDINADOR', 'CONTADOR', 'VOLUNTARIO'].map((r) => (
-              <span key={r} className="role-chip">{r}</span>
-            ))}
-          </div>
         </div>
       </div>
     </div>

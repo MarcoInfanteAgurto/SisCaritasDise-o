@@ -12,6 +12,8 @@ import {
   Users,
 } from 'lucide-react';
 import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
@@ -99,15 +101,25 @@ function DashboardFlowChart({ data }) {
   return (
     <div className="rechart-shell tall">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 8, right: 8, left: -24, bottom: 0 }} barGap={10}>
+        <AreaChart data={data} margin={{ top: 8, right: 8, left: -24, bottom: 0 }}>
+          <defs>
+            <linearGradient id="gradIngresos" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.35} />
+              <stop offset="100%" stopColor="#7c3aed" stopOpacity={0.02} />
+            </linearGradient>
+            <linearGradient id="gradEgresos" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.25} />
+              <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.02} />
+            </linearGradient>
+          </defs>
           <CartesianGrid stroke="#e8eef7" strokeDasharray="4 8" vertical={false} />
           <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fill: '#8da0bf', fontSize: 11, fontWeight: 700 }} />
           <YAxis tickLine={false} axisLine={false} tick={{ fill: '#8da0bf', fontSize: 11, fontWeight: 700 }} />
           <Tooltip content={<ChartTooltip />} />
           <Legend iconType="circle" wrapperStyle={{ fontSize: 11, fontWeight: 700 }} />
-          <Bar dataKey="ingresos" name="Ingresos" fill="#c0392b" radius={[8, 8, 2, 2]} maxBarSize={34} />
-          <Bar dataKey="egresos" name="Egresos" fill="#0f766e" radius={[8, 8, 2, 2]} maxBarSize={34} />
-        </BarChart>
+          <Area type="monotone" dataKey="ingresos" name="Ingresos" stroke="#7c3aed" strokeWidth={2.5} fill="url(#gradIngresos)" dot={false} activeDot={{ r: 4, strokeWidth: 2, fill: '#fff' }} />
+          <Area type="monotone" dataKey="egresos" name="Egresos" stroke="#06b6d4" strokeWidth={2.5} fill="url(#gradEgresos)" dot={false} activeDot={{ r: 4, strokeWidth: 2, fill: '#fff' }} />
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );
@@ -298,8 +310,8 @@ export function Dashboard({ onNavigate }) {
                 <p>Se calcula desde `finanzas` y `ventas`, separando movimiento operativo y compras.</p>
               </div>
               <div className="pro-legend">
-                <span><i className="income" />Ingresos</span>
-                <span><i className="expense" />Egresos</span>
+                <span><i style={{ background: '#7c3aed' }} />Ingresos</span>
+                <span><i style={{ background: '#06b6d4' }} />Egresos</span>
               </div>
             </div>
             <DashboardFlowChart data={flowSeries} />
@@ -407,7 +419,7 @@ export function Dashboard({ onNavigate }) {
                 <strong>{lowStockCount}</strong>
                 <em>Se compara `stock` vs `stockMinimo`</em>
               </button>
-              <button onClick={() => onNavigate && onNavigate('inventario', 'inventario-general')}>
+              <button onClick={() => onNavigate && onNavigate('farmacia', 'inventario-farmacia')}>
                 <span>Inventario social crítico</span>
                 <strong>{inventoryAlertCount}</strong>
                 <em>Se compara `quantity` vs `minStock`</em>

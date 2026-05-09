@@ -443,6 +443,22 @@ export const moduleMetricOverrides = {
   'rep-venta-tratamientos': { total: 50, ok: 0, inactive: 50, alert: 0, money: true, totalLabel: 'Total', okLabel: 'Consignado', inactiveLabel: 'Donado', alertLabel: 'Revocado' },
   'rep-venta-terapias': { total: 580, ok: 580, inactive: 0, alert: 0, money: true, totalLabel: 'Total', okLabel: 'Consignado', inactiveLabel: 'Donado', alertLabel: 'Revocado' },
   terapias: { total: 580, ok: 580, inactive: 0, alert: 0, money: true, totalLabel: 'Ventas terapia', okLabel: 'Consignado', inactiveLabel: 'Donado', alertLabel: 'Revocado' },
+  'cli-personal-medico': { total: 83, ok: 44, inactive: 39, alert: 39, totalLabel: 'Medicos', okLabel: 'Activos', inactiveLabel: 'Inactivos', alertLabel: 'Inactivos' },
+  'prod-tratamientos': { total: 53, ok: 42, inactive: 11, alert: 11, totalLabel: 'Tratamientos', okLabel: 'Activos', inactiveLabel: 'Inactivos', alertLabel: 'Revisar' },
+  'prod-consultas': { total: 6, ok: 6, inactive: 0, alert: 0, totalLabel: 'Consultas', okLabel: 'Activas', inactiveLabel: 'Inactivas', alertLabel: 'Alertas' },
+  'prod-terapias': { total: 118, ok: 104, inactive: 14, alert: 14, totalLabel: 'Terapias', okLabel: 'Activas', inactiveLabel: 'Inactivas', alertLabel: 'Revisar' },
+  'prod-medicamentos': { total: 959, ok: 414, inactive: 545, alert: 545, totalLabel: 'Medicamentos', okLabel: 'Activos', inactiveLabel: 'Inactivos', alertLabel: 'Revisar' },
+  'prod-kits-lab': { total: 5, ok: 5, inactive: 0, alert: 0, totalLabel: 'Kits', okLabel: 'Activos', inactiveLabel: 'Inactivos', alertLabel: 'Alertas' },
+  'rep-compras': { total: 75, ok: 72, inactive: 3, alert: 6, totalLabel: 'Compras', okLabel: 'Consignadas', inactiveLabel: 'Revocadas', alertLabel: 'Donadas' },
+  'rep-ventas': { total: 57.5, ok: 57.5, inactive: 0, alert: 0, money: true, totalLabel: 'Total', okLabel: 'Consignado', inactiveLabel: 'Donado', alertLabel: 'Revocado' },
+  'rep-laboratorio': { total: 118, ok: 118, inactive: 0, alert: 0, money: true, totalLabel: 'Total', okLabel: 'Consignado', inactiveLabel: 'Donado', alertLabel: 'Revocado' },
+  'rep-productos': { total: 147, ok: 53, inactive: 94, alert: 94, totalLabel: 'Productos', okLabel: 'Activos', inactiveLabel: 'Inactivos', alertLabel: 'Revisar' },
+  'rep-tratamientos': { total: 50, ok: 0, inactive: 50, alert: 0, money: true, totalLabel: 'Total', okLabel: 'Consignado', inactiveLabel: 'Donado', alertLabel: 'Revocado' },
+  'rep-consultas': { total: 50, ok: 50, inactive: 0, alert: 0, money: true, totalLabel: 'Total', okLabel: 'Consignado', inactiveLabel: 'Donado', alertLabel: 'Revocado' },
+  'rep-terapias': { total: 580, ok: 580, inactive: 0, alert: 0, money: true, totalLabel: 'Total', okLabel: 'Consignado', inactiveLabel: 'Donado', alertLabel: 'Revocado' },
+  'adm-pruebas-lab': { total: 158, ok: 105, inactive: 53, alert: 53, totalLabel: 'Pruebas', okLabel: 'Activas', inactiveLabel: 'Inactivas', alertLabel: 'Revisar' },
+  'adm-kits-lab': { total: 5, ok: 5, inactive: 0, alert: 0, totalLabel: 'Kits', okLabel: 'Activos', inactiveLabel: 'Inactivos', alertLabel: 'Alertas' },
+  'adm-compras': { total: 75, ok: 72, inactive: 3, alert: 6, totalLabel: 'Compras', okLabel: 'Consignadas', inactiveLabel: 'Revocadas', alertLabel: 'Donadas' },
 };
 
 export const moduleDefinitions = {
@@ -512,7 +528,36 @@ export const moduleDefinitions = {
   roles: { collection: 'usuarios', title: 'Roles y Permisos', description: 'Usuarios por rol operativo', columns: [['id', 'ID'], ['fullName', 'Usuario'], ['role', 'Rol'], ['email', 'Email'], ['status', 'Estado']] },
   seguridad: { collection: 'usuarios', title: 'Seguridad', description: 'Actividad de acceso y cuentas', columns: [['id', 'ID'], ['fullName', 'Usuario'], ['username', 'Usuario'], ['lastLogin', 'Ultimo acceso'], ['role', 'Rol'], ['status', 'Estado']] },
   auditoria: { collection: 'movimientos_inventario', title: 'Auditoria', description: 'Trazabilidad operativa reciente', columns: [['id', 'ID'], ['movementDate', 'Fecha'], ['productName', 'Entidad'], ['movementType', 'Evento'], ['movementReason', 'Detalle'], ['quantity', 'Cantidad']] },
-  configuracion: { collection: 'especialidades', title: 'Configuracion', description: 'Parametros activos del sistema', columns: [['specialtyCode', 'Codigo'], ['specialtyName', 'Parametro'], ['type', 'Tipo'], ['status', 'Estado']] },
+  // Clinica — Personal Medico (duplicate view within clinica module)
+  'cli-personal-medico': { collection: 'personal_medico', title: 'Personal Medico', description: 'Medicos, terapeutas y odontologos', columns: [['fullName', 'Apellidos y N.'], ['dni', 'DNI'], ['sexo', 'Sexo'], ['especialidad', 'Especialidad'], ['status', 'Estado']] },
+  // Productos — catalog sub-pages
+  'prod-tratamientos': { collection: 'tratamientos', title: 'Tratamientos', description: 'Catalogo de tratamientos clinicos con precios', columns: [['nombre', 'Nombre'], ['specialty', 'Especialidad'], ['precio', 'Precio'], ['status', 'Estado']] },
+  'prod-consultas': { collection: 'precios_consulta', title: 'Consultas', description: 'Tarifas de consulta por especialidad', columns: [['specialty', 'Especialidad'], ['precio', 'Precio'], ['status', 'Estado']] },
+  'prod-terapias': { collection: 'terapias_precios', title: 'Terapias', description: 'Tarifas de terapia por tipo de cliente', columns: [['tipoCliente', 'Tipo Cliente'], ['specialty', 'Especialidad'], ['precio', 'Precio'], ['status', 'Estado']] },
+  'prod-medicamentos': { collection: 'medicamentos', title: 'Medicamentos', description: 'Catalogo farmaceutico de productos', columns: [['denominacionComercial', 'Denominacion C.'], ['denominacionGenerica', 'Denominacion G.'], ['categoria', 'Presentacion'], ['precioVenta', 'V. S/'], ['status', 'Estado']] },
+  'prod-kits-lab': { collection: 'kits_laboratorio', title: 'Kits Laboratorio', description: 'Paquetes de pruebas de laboratorio', columns: [['nombre', 'Nombre'], ['pruebas', 'Pruebas incluidas'], ['precioKit', 'Precio'], ['status', 'Estado']] },
+  // Reportes — expanded
+  'rep-compras': { collection: 'ventas', title: 'Compras Medicas', description: 'Reporte de compras a proveedores', presetFilters: { domain: 'COMPRA' }, columns: [['numeroCompra', 'Numero C.'], ['fecha', 'Fecha C.'], ['proveedor', 'Proveedor'], ['total', 'Total'], ['tipo', 'Tipo'], ['estado', 'Estado']] },
+  'rep-laboratorio': { collection: 'ventas', title: 'Reporte Laboratorio', description: 'Ventas y servicios de laboratorio', presetFilters: { tipo: 'LABORATORIO' }, columns: [['ticket', 'Ticket'], ['fecha', 'Fecha'], ['pacienteNombre', 'Paciente'], ['items', 'Prueba / kit'], ['total', 'Total'], ['estado', 'Estado']] },
+  'rep-productos': { collection: 'productos', title: 'Reporte Productos', description: 'Catalogo y stock de productos sociales', columns: [['productCode', 'Codigo'], ['productName', 'Producto'], ['category', 'Categoria'], ['stockStatus', 'Stock'], ['estimatedValue', 'Valor'], ['status', 'Estado']] },
+  'rep-tratamientos': { collection: 'ventas', title: 'Reporte Tratamientos', description: 'Tratamientos por area, personal y estado', presetFilters: { tipo: 'TRATAMIENTO' }, columns: [['ticket', 'Ticket'], ['fecha', 'Fecha'], ['areaNombre', 'Area'], ['personalNombre', 'Personal'], ['pacienteNombre', 'Paciente'], ['total', 'Total'], ['estado', 'Estado']] },
+  'rep-consultas': { collection: 'ventas', title: 'Reporte Consultas', description: 'Consultas clinicas por especialidad', presetFilters: { tipo: 'CONSULTA' }, columns: [['ticket', 'Ticket'], ['fecha', 'Fecha'], ['areaNombre', 'Area'], ['personalNombre', 'Personal'], ['pacienteNombre', 'Paciente'], ['total', 'Total'], ['estado', 'Estado']] },
+  'rep-terapias': { collection: 'ventas', title: 'Reporte Terapias', description: 'Produccion de terapias por personal y paciente', presetFilters: { tipo: 'TERAPIA' }, columns: [['ticket', 'Ticket'], ['fecha', 'Fecha'], ['areaNombre', 'Area'], ['personalNombre', 'Personal'], ['pacienteNombre', 'Paciente'], ['total', 'Total'], ['estado', 'Estado']] },
+  // Administracion — expanded
+  'adm-pruebas-lab': { collection: 'pruebas_laboratorio', title: 'Pruebas Laboratorio', description: 'Administracion de pruebas de laboratorio', columns: [['nombre', 'Nombre'], ['precio', 'Precio'], ['tipoMuestra', 'Muestra'], ['tiempoResultado', 'Tiempo'], ['status', 'Estado']] },
+  'adm-kits-lab': { collection: 'kits_laboratorio', title: 'Kits Laboratorio', description: 'Administracion de paquetes de pruebas', columns: [['nombre', 'Nombre'], ['pruebas', 'Pruebas'], ['precioKit', 'Precio'], ['status', 'Estado']] },
+  'adm-compras': { collection: 'ventas', title: 'Compras', description: 'Administracion de compras a proveedores', presetFilters: { domain: 'COMPRA' }, columns: [['numeroCompra', 'Numero C.'], ['fecha', 'Fecha C.'], ['proveedor', 'Proveedor'], ['registradoPor', 'Registrado por'], ['total', 'Total'], ['tipo', 'Tipo'], ['estado', 'Estado']] },
+  // Configuracion — system settings
+  'config-general': { collection: 'especialidades', title: 'Configuracion General', description: 'Parametros generales del sistema', columns: [['specialtyCode', 'Codigo'], ['specialtyName', 'Parametro'], ['type', 'Tipo'], ['status', 'Estado']] },
+  'config-apariencia': { collection: 'especialidades', title: 'Temas y Apariencia', description: 'Modo oscuro, colores y personalizacion visual', columns: [['specialtyCode', 'Codigo'], ['specialtyName', 'Parametro'], ['type', 'Tipo'], ['status', 'Estado']] },
+  'config-notificaciones': { collection: 'especialidades', title: 'Notificaciones', description: 'Alertas, correos y canales de notificacion', columns: [['specialtyCode', 'Codigo'], ['specialtyName', 'Parametro'], ['type', 'Tipo'], ['status', 'Estado']] },
+  'config-seguridad': { collection: 'usuarios', title: 'Seguridad', description: 'Politicas de acceso, contraseñas y sesiones', columns: [['id', 'ID'], ['fullName', 'Usuario'], ['username', 'Usuario'], ['lastLogin', 'Ultimo acceso'], ['role', 'Rol'], ['status', 'Estado']] },
+  'config-roles': { collection: 'usuarios', title: 'Roles y Permisos', description: 'Gestion de roles y permisos del sistema', columns: [['id', 'ID'], ['fullName', 'Usuario'], ['role', 'Rol'], ['email', 'Email'], ['status', 'Estado']] },
+  'config-respaldo': { collection: 'especialidades', title: 'Respaldo de Datos', description: 'Backups automaticos y recuperacion', columns: [['specialtyCode', 'Codigo'], ['specialtyName', 'Parametro'], ['type', 'Tipo'], ['status', 'Estado']] },
+  'config-auditoria': { collection: 'movimientos_inventario', title: 'Auditoria y Logs', description: 'Registro de actividad y trazabilidad', columns: [['id', 'ID'], ['movementDate', 'Fecha'], ['productName', 'Entidad'], ['movementType', 'Evento'], ['movementReason', 'Detalle'], ['quantity', 'Cantidad']] },
+  'config-integraciones': { collection: 'especialidades', title: 'Integraciones', description: 'APIs externas, webhooks y servicios', columns: [['specialtyCode', 'Codigo'], ['specialtyName', 'Servicio'], ['type', 'Tipo'], ['status', 'Estado']] },
+  'config-correo': { collection: 'especialidades', title: 'Correo y SMTP', description: 'Configuracion de servidor de correo', columns: [['specialtyCode', 'Codigo'], ['specialtyName', 'Parametro'], ['type', 'Tipo'], ['status', 'Estado']] },
+  'config-horarios': { collection: 'especialidades', title: 'Horarios y Turnos', description: 'Configuracion de horarios de atencion', columns: [['specialtyCode', 'Codigo'], ['specialtyName', 'Turno'], ['type', 'Tipo'], ['status', 'Estado']] },
 };
 
 export function getRowsForPage(pageId) {
@@ -614,7 +659,7 @@ export function getOperationalModules() {
     { label: 'Medicamentos', total: legacyStats.medicamentos.total, active: legacyStats.medicamentos.active, inactive: legacyStats.medicamentos.inactive, module: 'farmacia', page: 'medicamentos' },
     { label: 'Precios terapias', total: legacyStats.preciosTerapias.total, active: legacyStats.preciosTerapias.active, inactive: legacyStats.preciosTerapias.inactive, module: 'administracion', page: 'precios-terapias' },
     { label: 'Pruebas lab.', total: legacyStats.pruebasLab.total, active: legacyStats.pruebasLab.active, inactive: legacyStats.pruebasLab.inactive, module: 'clinica', page: 'pruebas-lab' },
-    { label: 'Productos', total: legacyStats.productos.total, active: legacyStats.productos.active, inactive: legacyStats.productos.inactive, module: 'inventario', page: 'productos' },
+    { label: 'Productos', total: legacyStats.productos.total, active: legacyStats.productos.active, inactive: legacyStats.productos.inactive, module: 'productos', page: 'prod-tratamientos' },
     { label: 'Compras', total: legacyStats.compras.total, active: legacyStats.compras.consignado, inactive: legacyStats.compras.revocado, module: 'finanzas', page: 'compras' },
   ];
 }
